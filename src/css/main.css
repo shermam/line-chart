@@ -4,3 +4,7 @@
     margin: 10vh 10vw;
     font-size: 20vh;
 }
+
+canvas{
+    border: 4px solid;
+}

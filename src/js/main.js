@@ -25,7 +25,7 @@ function toggle(event) {
 }
 
 function broadcast() {
-    hub.broadcast('teste', { x, y, z });
+    hub.broadcast('teste', [ x, y, z ]);
 }
 
 function updatePosition(e) {
