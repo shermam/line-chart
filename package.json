@@ -1,0 +1,16 @@
+{
+  "name": "step-count",
+  "version": "1.0.0",
+  "description": "Simple realtime pedometer",
+  "main": "index.js",
+  "dependencies": {
+    "signalhub": "^4.9.0",
+    "watchify": "^3.11.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "signal": "signalhub listen -p 8080 -h 192.168.0.100"
+  },
+  "author": "Shermam Miranda",
+  "license": "MIT"
+}
