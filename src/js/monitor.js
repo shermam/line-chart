@@ -4,13 +4,18 @@
 // watchify src/js/main.js -o src/js/bundle.js
 // http-server ./src -c-1
 
-const signalhub = require('signalhub');
-const hub = signalhub('step-conter', ['http://192.168.0.111:8081']);
+//const signalhub = require('signalhub');
+//const hub = signalhub('step-conter', ['http://192.168.0.111:8081']);
 const canvas = document.querySelector('canvas');
-const saveDataButton = document.querySelector('#saveData');
 const context = canvas.getContext('2d');
-const colors = ['red', 'green', 'blue'];
+const saveDataButton = document.querySelector('#saveData');
+const lablesDiv = document.querySelector('#labels');
+
+//Data for the chart
 const motionData = JSON.parse(localStorage.getItem('data')) || [];
+const colors = ['red', 'green', 'blue', 'black', 'purple'];
+const lables = ['X', 'Y', 'Z', 'SUM'];
+const shouldRender = lables.map(l => true);
 
 canvas.width = innerWidth - 20;
 canvas.height = 500;
@@ -20,8 +25,9 @@ let windowSize = 500;
 let xOffset = 0;
 let centerLine = canvas.height / 2;
 
+renderLabels(lablesDiv, lables);
 
-hub.subscribe('teste').on('data', data => motionData.push(data));
+//hub.subscribe('teste').on('data', data => motionData.push(data));
 
 saveDataButton.addEventListener('click', _ => {
     localStorage.setItem('data', JSON.stringify(motionData));
@@ -30,24 +36,20 @@ saveDataButton.addEventListener('click', _ => {
 let isGrabbing = false;
 
 document.addEventListener('mousedown', e => {
-    e.preventDefault();
     isGrabbing = true;
 });
 
 document.addEventListener('mouseup', e => {
-    e.preventDefault();
     isGrabbing = false;
 });
 
 document.addEventListener('mousemove', e => {
     if (isGrabbing) {
-        e.preventDefault();
-
         if (e.altKey) {
-            windowSize -= e.movementX * 5;
+            windowSize += e.movementX * 5;
             scalar -= (e.movementY / 10);
         } else {
-            xOffset += e.movementX;
+            xOffset -= e.movementX;
             centerLine += e.movementY;
         }
 
@@ -60,6 +62,19 @@ document.addEventListener('wheel', e => {
 });
 
 
+function renderLabels(div, labels) {
+    div.innerHTML = `
+        ${labels.map((l, i) => `<label>${l}<input type="checkbox" checked id="${i}" /></label><br>`).join('')}
+    `;
+
+    div.querySelectorAll('input').forEach(el => {
+        el.addEventListener('change', e => {
+            shouldRender[parseInt(el.id)] = el.checked;
+        })
+    })
+}
+
+
 
 function draw() {
 
@@ -70,7 +85,11 @@ function draw() {
 function drawPoints() {
     context.clearRect(0, 0, canvas.width, canvas.height);
 
-    for (let j = 0; j < 3; j++) {
+    for (let j = 0; j < motionData[0].length; j++) {
+
+        if (!shouldRender[j]) {
+            continue;
+        }
 
         context.beginPath();
         context.strokeStyle = colors[j];

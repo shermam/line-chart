@@ -7,4 +7,6 @@
 
 canvas{
     border: 4px solid;
+    /*Temporary easy and dirty flipping*/
+    transform: scaleX(-1);
 }
