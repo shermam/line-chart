@@ -37,12 +37,12 @@ document.addEventListener('mousemove', e => {
     if (isGrabbing) {
         e.preventDefault();
 
-        xOffset += e.movementX;
-
         if (e.altKey) {
-            centerLine += e.movementY;
+            windowSize -= e.movementX * 5;
+            scalar -= (e.movementY / 10);
         } else {
-            scalar += (e.movementY / 10);
+            xOffset += e.movementX;
+            centerLine += e.movementY;
         }
 
     }
@@ -50,6 +50,7 @@ document.addEventListener('mousemove', e => {
 
 document.addEventListener('wheel', e => {
     windowSize -= e.movementY * 5;
+    scalar += (e.movementY / 10);
 });
 
 
