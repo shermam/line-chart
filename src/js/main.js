@@ -1,5 +1,5 @@
 const signalhub = require('signalhub');
-const hub = signalhub('step-conter', ['http://192.168.0.100:8080']);
+const hub = signalhub('step-conter', ['http://192.168.0.111:8081']);
 const startButton = document.querySelector('.start-button');
 
 let running = false;
@@ -21,11 +21,11 @@ function toggle(event) {
         interval = setInterval(broadcast, 1000 / frequency);
     } else {
         clearInterval(interval);
-    }    
+    }
 }
 
 function broadcast() {
-    hub.broadcast('teste', [ x, y, z ]);
+    hub.broadcast('teste', [x, y, z]);
 }
 
 function updatePosition(e) {
