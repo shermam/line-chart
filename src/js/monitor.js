@@ -1,3 +1,9 @@
+// Comands to start environment
+// npm run signal
+// watchify src/js/monitor.js -o src/js/bundle2.js
+// watchify src/js/main.js -o src/js/bundle.js
+// http-server ./src -c-1
+
 const signalhub = require('signalhub');
 const hub = signalhub('step-conter', ['http://192.168.0.111:8081']);
 const canvas = document.querySelector('canvas');
