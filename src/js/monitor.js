@@ -55,8 +55,6 @@ document.addEventListener('wheel', e => {
 
 
 
-
-
 function draw() {
 
     drawPoints();
@@ -70,11 +68,13 @@ function drawPoints() {
 
         context.beginPath();
         context.strokeStyle = colors[j];
-        context.moveTo(0, centerLine);
-        for (let i = 1; i <= windowSize; i++) {
+        context.moveTo((canvas.width / windowSize) * xOffset, (centerLine) - (motionData[motionData.length - 1][j] * scalar));
+        for (let i = 2; i <= windowSize; i++) {
             let index = motionData.length - i + xOffset;
 
-            if (!motionData[index]) continue;
+            if (!motionData[index]) {
+                continue;
+            };
 
             let xCoord = (canvas.width / windowSize) * (i - 1);
             let yCoord = (centerLine) - (motionData[index][j] * scalar);
