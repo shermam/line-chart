@@ -10,11 +10,12 @@ const canvas = document.querySelector('canvas');
 const context = canvas.getContext('2d');
 const saveDataButton = document.querySelector('#saveData');
 const lablesDiv = document.querySelector('#labels');
+const avgWindowSlider = document.querySelector('#avgWindow');
 
 //Data for the chart
 const motionData = JSON.parse(localStorage.getItem('data')) || [];
-const colors = ['red', 'green', 'blue', 'black', 'purple'];
-const lables = ['X', 'Y', 'Z', 'SUM'];
+const colors = ['red', 'green', 'blue', 'black', 'purple', 'orange'];
+const lables = ['X', 'Y', 'Z', 'SUM', 'AVG', 'NORMAL'];
 const shouldRender = lables.map(l => true);
 
 canvas.width = innerWidth - 20;
@@ -24,8 +25,11 @@ let scalar = 5;
 let windowSize = 500;
 let xOffset = 0;
 let centerLine = canvas.height / 2;
+let avgWindow = parseInt(avgWindowSlider.value);
 
-renderLabels(lablesDiv, lables);
+
+treatData(motionData);
+renderLabels(lablesDiv, lables, colors);
 
 //hub.subscribe('teste').on('data', data => motionData.push(data));
 
@@ -35,15 +39,15 @@ saveDataButton.addEventListener('click', _ => {
 
 let isGrabbing = false;
 
-document.addEventListener('mousedown', e => {
+canvas.addEventListener('mousedown', e => {
     isGrabbing = true;
 });
 
-document.addEventListener('mouseup', e => {
+canvas.addEventListener('mouseup', e => {
     isGrabbing = false;
 });
 
-document.addEventListener('mousemove', e => {
+canvas.addEventListener('mousemove', e => {
     if (isGrabbing) {
         if (e.altKey) {
             windowSize += e.movementX * 5;
@@ -56,15 +60,45 @@ document.addEventListener('mousemove', e => {
     }
 });
 
-document.addEventListener('wheel', e => {
+canvas.addEventListener('wheel', e => {
     windowSize -= e.movementY * 5;
     scalar += (e.movementY / 10);
 });
 
+avgWindowSlider.addEventListener('mousemove', e => {
+    if (avgWindow == avgWindowSlider.value) return;
+    avgWindow = parseInt(avgWindowSlider.value);
+    treatData(motionData)
+});
 
-function renderLabels(div, labels) {
+
+function treatData(data) {
+    data.forEach((d, i) => {
+        d[3] = (d[0] + d[1] + d[2]);
+        d[4] = (d[0] + d[1] + d[2]) / 3;
+        d[5] = 0;
+
+        for (let j = i - avgWindow; j <= i + avgWindow; j++) {
+            if (!data[j]) {
+                d[5] += d[3];
+            } else {
+                d[5] += (data[j][0] + data[j][1] + data[j][2]);
+            }
+        }
+
+        d[5] = d[5] / (2 * avgWindow + 1);
+    });
+}
+
+
+function renderLabels(div, labels, colors) {
     div.innerHTML = `
-        ${labels.map((l, i) => `<label>${l}<input type="checkbox" checked id="${i}" /></label><br>`).join('')}
+        ${labels.map((l, i) => `
+        <label style="cursor:pointer;">
+            <input type="checkbox" checked id="${i}" />
+            <span style="display:inline-block;width:30px;height:15px;background-color:${colors[i]};"></span>
+            ${l}
+        </label><br>`).join('')}
     `;
 
     div.querySelectorAll('input').forEach(el => {
