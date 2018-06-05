@@ -1,5 +1,5 @@
 const signalhub = require('signalhub');
-const hub = signalhub('step-conter', ['http://192.168.0.111:8081']);
+const hub = signalhub('step-conter', ['http://10.1.32.15:8081']);
 const startButton = document.querySelector('.start-button');
 
 let running = false;
